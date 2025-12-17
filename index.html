@@ -1,6 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>LIFF Debug</title>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+</head>
 <body>
-  <h1>GitHub Pages OK</h1>
+  <p id="msg">初始化中...</p>
+
+<script>
+const LIFF_ID = "2008700969-bNDOgS7g";
+const RAGIC_URL = "https://ap11.ragic.com/HydexTech/customer-orders/";
+
+function show(msg) {
+  document.getElementById("msg").innerText = msg;
+}
+
+liff.init({ liffId: LIFF_ID })
+  .then(() => {
+    show("LIFF 初始化成功");
+    return liff.getProfile();
+  })
+  .then(p => {
+    show("取得 UID：" + p.userId + "，跳轉中…");
+    location.href = `${RAGIC_URL}?LINE_UID=${p.userId}`;
+  })
+  .catch(err => {
+    show("錯誤：" + err);
+  });
+</script>
 </body>
 </html>
