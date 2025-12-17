@@ -10,23 +10,21 @@
 
 <script>
 const LIFF_ID = "2008700969-bNDOgS7g";
-const RAGIC_URL = "https://ap11.ragic.com/HydexTech/customer-orders/";
+const RAGIC_URL = "https://ap11.ragic.com/HydexTech/customer-orders/entry";
 
 function show(msg) {
   document.getElementById("msg").innerText = msg;
 }
 
 liff.init({ liffId: LIFF_ID })
-  .then(() => {
-    show("LIFF 初始化成功");
-    return liff.getProfile();
-  })
+  .then(() => liff.getProfile())
   .then(p => {
-    show("取得 UID：" + p.userId + "，跳轉中…");
-    location.href = `${RAGIC_URL}?LINE_UID=${p.userId}`;
+    const url =
+      RAGIC_URL + "?LINE_UID=" + encodeURIComponent(p.userId);
+    window.location.replace(url);
   })
   .catch(err => {
-    show("錯誤：" + err);
+    document.body.innerText = "錯誤：" + err;
   });
 </script>
 </body>
