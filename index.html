@@ -3,25 +3,15 @@
 <head>
 <meta charset="utf-8">
 <title>LINE 用車預約</title>
-
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-
-<style>
-body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont;
-  text-align: center;
-  padding: 40px;
-}
-</style>
 </head>
 
 <body>
-<p id="status">資料處理中，請稍候…</p>
+<pre id="status">初始化中…</pre>
 
 <script>
 (async () => {
   try {
-    // === 1. 初始化 LIFF ===
     await liff.init({ liffId: "2008700969-bNDOgS7g" });
 
     if (!liff.isLoggedIn()) {
@@ -34,14 +24,14 @@ body {
     const lineName = profile.displayName;
 
     document.getElementById("status").innerText =
-      "建立預約資料中…";
+      "LINE UID: " + lineUserId + "\n建立 Ragic 資料中…";
 
-    // === 2. 用 API 建立一筆新資料（先寫 LINE 資料） ===
-    const createRes = await fetch(
+    const res = await fetch(
       "https://ap11.ragic.com/HydexTech/customer-orders/1",
       {
         method: "POST",
         headers: {
+          // ⚠️ 注意這一行
           "Authorization": "Basic Wk53UWprQmRhV1JEODNUaDF2eVhGSzNqODFvRVdBcHFaZUxqb1RiRlV5S01qN1hDMGNtUGlaUHFNcHVEMWIwTg==",
           "Content-Type": "application/json"
         },
@@ -52,30 +42,28 @@ body {
       }
     );
 
-    const createResult = await createRes.json();
+    const text = await res.text();
+    document.getElementById("status").innerText +=
+      "\nHTTP 狀態碼: " + res.status +
+      "\n回傳內容:\n" + text;
 
-    if (!createResult?.data?._ragicId) {
-      throw new Error("Ragic 建立資料失敗");
+    if (!res.ok) {
+      throw new Error("Ragic API 呼叫失敗");
     }
 
-    const ragicId = createResult.data._ragicId;
+    const result = JSON.parse(text);
 
-    document.getElementById("status").innerText =
-      "導向預約表單…";
-
-    // === 3. 導向該筆資料的「編輯頁」 ===
     window.location.href =
       "https://ap11.ragic.com/HydexTech/customer-orders/1/" +
-      ragicId +
+      result.data._ragicId +
       "?edit";
 
   } catch (err) {
+    document.getElementById("status").innerText +=
+      "\n錯誤：" + err.message;
     console.error(err);
-    document.getElementById("status").innerText =
-      "系統發生錯誤，請重新操作或聯絡客服";
   }
 })();
 </script>
-
 </body>
 </html>
