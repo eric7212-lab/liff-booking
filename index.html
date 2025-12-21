@@ -47,11 +47,12 @@
       "\nHTTP 狀態碼: " + res.status +
       "\n回傳內容:\n" + text;
 
-    if (!res.ok) {
-      throw new Error("Ragic API 呼叫失敗");
-    }
+    if (!res.ok) throw new Error("API 失敗");
 
     const result = JSON.parse(text);
+
+    if (!result?.data?._ragicId)
+      throw new Error("未取得 ragicId");
 
     window.location.href =
       "https://ap11.ragic.com/HydexTech/customer-orders/1/" +
@@ -61,7 +62,6 @@
   } catch (err) {
     document.getElementById("status").innerText +=
       "\n錯誤：" + err.message;
-    console.error(err);
   }
 })();
 </script>
