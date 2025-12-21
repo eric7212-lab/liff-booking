@@ -22,7 +22,7 @@ body {
 (async () => {
   try {
     // === 1. 初始化 LIFF ===
-    await liff.init({ liffId: "你的_LIFF_ID" });
+    await liff.init({ liffId: "2008700969-bNDOgS7g" });
 
     if (!liff.isLoggedIn()) {
       liff.login();
@@ -38,16 +38,16 @@ body {
 
     // === 2. 建立 Ragic 資料（先建空資料） ===
     const createRes = await fetch(
-      "https://ap11.ragic.com/你的帳號/你的表單/1",
+      "https://ap11.ragic.com/HydexTech/customer-orders/1",
       {
         method: "POST",
         headers: {
-          "Authorization": "Basic 你的_API_KEY",
+          "Authorization": "Wk53UWprQmRhV1JEODNUaDF2eVhGSzNqODFvRVdBcHFaZUxqb1RiRlV5S01qN1hDMGNtUGlaUHFNcHVEMWIwTg==",
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          line_user_id: lineUserId,
-          line_name: lineName
+          LINE_UID: lineUserId,
+          Line_name: lineName
         })
       }
     );
@@ -65,7 +65,7 @@ body {
 
     // === 3. 導向該筆資料的「編輯頁」 ===
     window.location.href =
-      "https://ap11.ragic.com/你的帳號/你的表單/1/" +
+      "https://ap11.ragic.com/HydexTech/customer-orders/1" +
       ragicId +
       "?edit";
 
