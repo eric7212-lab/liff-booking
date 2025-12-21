@@ -2,26 +2,80 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <title>LIFF Debug</title>
-  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <title>LINE 用車預約</title>
+
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+<style>
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont;
+  text-align: center;
+  padding: 40px;
+}
+</style>
 </head>
+
 <body>
-  <p id="msg">初始化中...</p>
+<p id="status">資料處理中，請稍候…</p>
 
 <script>
-const LIFF_ID = "2008700969-bNDOgS7g";
-const RAGIC_URL = "https://ap11.ragic.com/HydexTech/customer-orders/1/entry?LINE_UID=TEST123";
+(async () => {
+  try {
+    // === 1. 初始化 LIFF ===
+    await liff.init({ liffId: "你的_LIFF_ID" });
 
-liff.init({ liffId: LIFF_ID })
-  .then(() => liff.getProfile())
-  .then(p => {
-    const url =
-      RAGIC_URL + "?LINE_UID=" + encodeURIComponent(p.userId);
-    window.location.replace(url);
-  })
-  .catch(err => {
-    document.body.innerText = "錯誤：" + err;
-  });
+    if (!liff.isLoggedIn()) {
+      liff.login();
+      return;
+    }
+
+    const profile = await liff.getProfile();
+    const lineUserId = profile.userId;
+    const lineName = profile.displayName;
+
+    document.getElementById("status").innerText =
+      "建立預約資料中…";
+
+    // === 2. 建立 Ragic 資料（先建空資料） ===
+    const createRes = await fetch(
+      "https://ap11.ragic.com/你的帳號/你的表單/1",
+      {
+        method: "POST",
+        headers: {
+          "Authorization": "Basic 你的_API_KEY",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          line_user_id: lineUserId,
+          line_name: lineName
+        })
+      }
+    );
+
+    const createResult = await createRes.json();
+
+    if (!createResult?.data?._ragicId) {
+      throw new Error("Ragic 建立資料失敗");
+    }
+
+    const ragicId = createResult.data._ragicId;
+
+    document.getElementById("status").innerText =
+      "導向預約表單…";
+
+    // === 3. 導向該筆資料的「編輯頁」 ===
+    window.location.href =
+      "https://ap11.ragic.com/你的帳號/你的表單/1/" +
+      ragicId +
+      "?edit";
+
+  } catch (err) {
+    console.error(err);
+    document.getElementById("status").innerText =
+      "系統發生錯誤，請重新操作或聯絡客服";
+  }
+})();
 </script>
+
 </body>
 </html>
