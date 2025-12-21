@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
-  <title>LINE 用車預約</title>
+<meta charset="utf-8">
+<title>LINE 用車預約</title>
 
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 
@@ -36,7 +36,7 @@ body {
     document.getElementById("status").innerText =
       "建立預約資料中…";
 
-    // === 2. 建立 Ragic 資料（先建空資料） ===
+    // === 2. 用 API 建立一筆新資料（先寫 LINE 資料） ===
     const createRes = await fetch(
       "https://ap11.ragic.com/HydexTech/customer-orders/1",
       {
@@ -46,7 +46,7 @@ body {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          1001858: lineUserId,
+          line_user_id: lineUserId,
           line_name: lineName
         })
       }
@@ -65,7 +65,7 @@ body {
 
     // === 3. 導向該筆資料的「編輯頁」 ===
     window.location.href =
-      "https://ap11.ragic.com/HydexTech/customer-orders/1" +
+      "https://ap11.ragic.com/HydexTech/customer-orders/1/" +
       ragicId +
       "?edit";
 
