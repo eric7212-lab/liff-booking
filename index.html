@@ -27,7 +27,7 @@
       "LINE UID: " + lineUserId + "\n建立 Ragic 資料中…";
 
     const res = await fetch(
-      "https://ap11.ragic.com/HydexTech/customer-orders/1",
+      "https://ap11.ragic.com/HydexTech/customer-orders/1?webview&webaction=form&ver=new&version=2",
       {
         method: "POST",
         headers: {
@@ -55,7 +55,7 @@
       throw new Error("未取得 ragicId");
 
     window.location.href =
-      "https://ap11.ragic.com/HydexTech/customer-orders/1/" +
+      "https://ap11.ragic.com/HydexTech/customer-orders/1?webview&webaction=form&ver=new&version=2" +
       result.data._ragicId +
       "?edit";
 
